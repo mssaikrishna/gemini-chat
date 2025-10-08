@@ -1,0 +1,83 @@
+<div class="chat-container">
+  <!-- Header -->
+  <div class="chat-header">
+    <h2>🤖 Gemini AI Assistant</h2>
+    <p>Powered by Google's latest AI models</p>
+  </div>
+
+  <!-- Model Selection -->
+  <div class="model-selector">
+    <label for="modelSelect">AI Model</label>
+    <select 
+      id="modelSelect" 
+      [(ngModel)]="selectedModel" 
+      (change)="onModelChange()"
+      [disabled]="loading">
+      <option *ngFor="let model of availableModels" [value]="model.name">
+        {{ model.displayName }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Chat Messages -->
+  <div class="chat-box">
+    <!-- Welcome Message -->
+    <div *ngIf="messages.length === 0" class="message system-message">
+      <div class="message-text">
+        💫 Welcome! I'm your Gemini AI assistant. Ask me anything and I'll help you out.
+      </div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div 
+      *ngFor="let msg of messages" 
+      [ngClass]="{
+        'message': true,
+        'user-message': msg.sender === 'You',
+        'bot-message': msg.sender.includes('Gemini'),
+        'system-message': msg.sender === 'System',
+        'error-message': msg.sender === 'Error'
+      }">
+      
+      <span class="message-sender">
+        {{ 
+          msg.sender === 'You' ? '👤 You' : 
+          msg.sender.includes('Gemini') ? '🤖 ' + msg.sender :
+          msg.sender === 'System' ? '⚙️ System' :
+          msg.sender === 'Error' ? '❌ Error' : msg.sender
+        }}
+      </span>
+      <div class="message-text">{{ msg.text }}</div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="loading" class="loading">
+      <span>AI is thinking</span>
+      <div class="loading-dots">
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="input-container">
+    <div class="input-wrapper">
+      <input
+        type="text"
+        [(ngModel)]="userInput"
+        placeholder="Type your message here..."
+        (keyup.enter)="sendMessage()"
+        [disabled]="loading"
+      />
+    </div>
+    <button 
+      class="send-button" 
+      (click)="sendMessage()" 
+      [disabled]="loading || !userInput.trim()">
+      <span>Send</span>
+      <span>🚀</span>
+    </button>
+  </div>
+</div>
